@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "479178802040",
+    "firebase_url": "https://gigl-52ce9.firebaseio.com",
+    "project_id": "gigl-52ce9",
+    "storage_bucket": "gigl-52ce9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479178802040:android:ed35c5eb7bc6f638",
+        "android_client_info": {
+          "package_name": "com.example.moraskool.gig"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479178802040-s6gk1g19n1p33i2i93nrq1fh87us1ld5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.moraskool.gig",
+            "certificate_hash": "3163a801f341570e7914eb37cbeebd62d0f0c003"
+          }
+        },
+        {
+          "client_id": "479178802040-87tf0qiherng4bog30agpb8qv2mcp0m8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC55r8hwF463fGYC6ZN0YuLV4qNQhkZA7s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479178802040-87tf0qiherng4bog30agpb8qv2mcp0m8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

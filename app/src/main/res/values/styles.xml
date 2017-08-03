@@ -1,0 +1,63 @@
+<resources>
+
+    <style name="MyTheme" parent="Base.MyTheme"></style>
+
+    <style name="Base.MyTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_500</item>
+        <item name="colorPrimaryDark">@color/primary_700</item>
+        <item name="colorAccent">@color/accent_500</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/bg_light</item>
+    </style>
+
+    <style name="MyAppDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/primary_500</item>
+        <item name="colorPrimaryDark">@color/primary_700</item>
+        <item name="colorAccent">@color/accent_500</item>
+    </style>
+
+    <style name="Widget.MyApp.HeaderBar.Spinner" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:dropDownSelector">?attr/selectableItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="overlapAnchor">true</item>
+    </style>
+
+    <style name="CollapsedTitleSpaceFix" parent="Base.TextAppearance.AppCompat.Title">
+        <item name="android:layout_marginTop">23dp</item>
+    </style>
+
+    <style name="MyTheme.Detail" parent="MyTheme"></style>
+
+    <color name="bg_light">#FAFAFA</color>
+
+    <style name="MyTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="MyTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="PlaceHolder"/>
+
+    <style name="PlaceHolder.Message">
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:maxLines">@integer/message_max_lines</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="PlaceHolder.Button">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bkg_gray_round_rect</item>
+    </style>
+
+</resources>

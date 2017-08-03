@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Gig</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="section_format">Page %1$d</string>
+    <string name="action_logout">Log out</string>
+    <string name="gig_name_hint">e.g Take CMPEN 351 Class Notes</string>
+    <string name="gig_description">Type your full description here</string>
+    <string name="description_txt">Description</string>
+    <string name="text_ammount">Amount</string>
+    <string name="ammt_hint"> 0.00</string>
+    <string name="click_on_left">Gigs will appear here once you start using the app.</string>
+    <string name="sign_Google"> Sign In with Google</string>
+    <string name="snap">This is your gig feed.</string>
+</resources>

@@ -30,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.moraskool.gig.Adapter.DessertAdapter;
+import com.example.moraskool.gig.Model.Dessert;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -37,12 +38,17 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-/**
+/*
  * Created by moraskool on 16/05/2017.
  */
 
@@ -50,10 +56,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private String personName;
     private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleApiClient mGoogleApiClient;
+    private FirebaseDatabase mfirebaseDatabase;
     private FirebaseAuth mFirebaseAuth;
+    private DatabaseReference mDatabaseGig;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private List<Dessert> dessertList;
+
+
     ImageButton fabBtn;
     View fabShadow;
+
 
     Toolbar toolbar;
 
@@ -86,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         // UID specific to the provider
                         String uid = profile.getUid();
                         // Name, email address, and profile photo Url
-                         personName = profile.getDisplayName();
+                         personName = currentUser.getDisplayName();
                     }
                 } else {
                     goSignIn();
@@ -97,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
         setSupportActionBar(toolbar);
 
-        if (getSupportActionBar() != null) getSupportActionBar().setTitle("Hullo Morayo!");
+        if (getSupportActionBar() != null) getSupportActionBar().setTitle("Hello! " + personName );
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
@@ -181,6 +195,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void onStart(){
         super.onStart();
         mFirebaseAuth.addAuthStateListener(firebaseAuthListener);
+
     }
 
     public void goSignIn(){
@@ -192,9 +207,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new DummyFragment(
+        // TODO : Create another "FeedsFragment" class for the each tabs,
+
+        adapter.addFrag(new FeedsFragment(
                 ContextCompat.getColor(this, R.color.amber_50)), "Gig Feeds");
-        adapter.addFrag(new DummyFragment(
+        adapter.addFrag(new FeedsFragment(
                 ContextCompat.getColor(this, R.color.purple_50)), "Your Gigs");
         viewPager.setAdapter(adapter);
     }
@@ -236,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        public ViewPagerAdapter(FragmentManager manager) {
+        private ViewPagerAdapter(FragmentManager manager) {
             super(manager);
         }
 
@@ -250,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             return mFragmentList.size();
         }
 
-        public void addFrag(Fragment fragment, String title) {
+        private void addFrag(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
@@ -262,33 +279,57 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     // handles each tab content, fill up later with dynamic data
-    public static class DummyFragment extends Fragment {
+    public static class FeedsFragment extends Fragment {
         int color;
 
-        public DummyFragment() {
+        public FeedsFragment() {
         }
 
         @SuppressLint("ValidFragment")
-        public DummyFragment(int color) {
+        public FeedsFragment(int color) {
             this.color = color;
         }
+
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.dummy_fragment, container, false);
-
+            final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
             final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
             frameLayout.setBackgroundColor(color);
-
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
-
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setHasFixedSize(true);
 
-            DessertAdapter adapter = new DessertAdapter(getContext());
+            DatabaseReference mDatabaseGig;
+            final List<Dessert> dessertList;
+
+            // get the gig database
+            mDatabaseGig = FirebaseDatabase.getInstance().getReference("Gig Posts");
+            dessertList = new ArrayList<>();
+           final DessertAdapter adapter = new DessertAdapter(getContext(), dessertList);
             recyclerView.setAdapter(adapter);
 
+            mDatabaseGig.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    dessertList.clear();
+                    for(DataSnapshot gigSnapshot: dataSnapshot.getChildren()){
+                        Dessert dessert = gigSnapshot.getValue(Dessert.class);
+                        dessertList.add(dessert);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            // possible to put progress dialogue
             return view;
         }
     }
@@ -309,5 +350,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             mFirebaseAuth.removeAuthStateListener(firebaseAuthListener);
         }
     }
+
+   /* Todo : Implement to check if there is data
+    private void checkIfEmpty(){
+        if(Dessert.size == 0){
+            recylerview.setVisibility(View.INVISIBLE);
+            emptyText.setVisibility(View.VISIBLE);
+        }else{
+            recylerview.setVisibility(View.VISIBLE);
+            emptyText.setVisibility(View.INVISIBLE);
+        }
+    }
+   */
 }
 

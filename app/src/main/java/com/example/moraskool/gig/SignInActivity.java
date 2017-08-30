@@ -133,6 +133,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 firebaseAuthWithGoogle(account);
             } else {
                 // Log message Google Sign In failed
+                // TODO: create ui for google sign in failed
                 Log.e(TAG, "Google Sign In failed.");
             }
         }

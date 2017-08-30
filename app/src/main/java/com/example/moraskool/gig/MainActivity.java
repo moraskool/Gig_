@@ -53,7 +53,7 @@ import java.util.List;
  */
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private String personName;
+    public String personName;
     private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleApiClient mGoogleApiClient;
     private FirebaseDatabase mfirebaseDatabase;
@@ -97,10 +97,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
                 if (currentUser != null) {
                     for (UserInfo profile : currentUser.getProviderData()) {
-                        // UID specific to the provider
+                       // ID of the provider (ex. google.com)
+                        String providerID = profile.getProviderId();
+
+                        // UID specific to the provider e.g google.com
                         String uid = profile.getUid();
+
                         // Name, email address, and profile photo Url
-                         personName = currentUser.getDisplayName();
+                         personName = profile.getDisplayName();
                     }
                 } else {
                     goSignIn();
@@ -111,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
         setSupportActionBar(toolbar);
 
-        if (getSupportActionBar() != null) getSupportActionBar().setTitle("Hello! " + personName );
+        if (getSupportActionBar() != null) getSupportActionBar().setTitle("Hello " + personName  + "! ");
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.htab_viewpager);

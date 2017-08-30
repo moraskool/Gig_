@@ -47,6 +47,7 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
                 context.getResources().getStringArray(R.array.dessert_amounts));
     }
 
+
     // TODO: another placeholder stuff here
     @Override
     public DessertVh onCreateViewHolder(ViewGroup parent, int viewType) {

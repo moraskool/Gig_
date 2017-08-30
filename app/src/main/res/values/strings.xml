@@ -10,8 +10,17 @@
     <string name="gig_description">Type your full description here</string>
     <string name="description_txt">Description</string>
     <string name="text_ammount">Amount</string>
-    <string name="ammt_hint"> 0.00</string>
+    <string name="ammt_hint"> Amount e.g 50</string>
     <string name="click_on_left">Gigs will appear here once you start using the app.</string>
     <string name="sign_Google"> Sign In with Google</string>
     <string name="snap">This is your gig feed.</string>
+    <string name="gig_name">Gig Name</string>
+    <string name="sign_in_to_gig">Sign in to Gig</string>
+    <string name="usd_txt">USD</string>
+
+    <string-array name="android_layout_arrays">
+        <item>Currency</item>
+        <item>USD</item>
+        <item>NGN</item>
+    </string-array>
 </resources>

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textColor="@color/cardview_dark_background"
-        android:text="Sign in to Gig"
+        android:text="@string/sign_in_to_gig"
         android:textSize="30sp"
         android:layout_below="@+id/progressbar"
         android:layout_centerHorizontal="true"

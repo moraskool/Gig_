@@ -28,10 +28,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+//import com.example.moraskool.gig.databinding.ActivitySignInBinding;
 
 public class SignInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
+   // private ActivitySignInBinding mBinding;
     private static final String TAG = SignInActivity.class.getSimpleName();
 
     String[] colors = {"#96CC7A", "#EA705D", "#66BBCC"};
@@ -59,6 +61,18 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             startActivity(introIntent);
 
             setContentView(R.layout.activity_sign_in);
+        // Initialize FirebaseAuth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth mFirebaseAuth) {
+                // Check if user is signed in (non-null) and update UI accordingly.
+                FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
+                if (currentUser != null) {
+                    goToMain();
+                }
+            }
+        };
 
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -81,34 +95,14 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
           progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
-            // Initialize FirebaseAuth
-            mFirebaseAuth = FirebaseAuth.getInstance();
-            firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth mFirebaseAuth) {
-                    // Check if user is signed in (non-null) and update UI accordingly.
-                    FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
-                    if (currentUser != null) {
-                     goToMain();
-                    }
-                }
-            };
+
     }
+
 
     @Override
     public void onStart(){
         super.onStart();
         mFirebaseAuth.addAuthStateListener(firebaseAuthListener);
-    }
-
-    private void handleFirebaseAuthResult(AuthResult authResult) {
-        if (authResult != null) {
-            // Welcome the user
-            FirebaseUser user = authResult.getUser();
-            Toast.makeText(this, "Welcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
-            // Go back to the main activity
-            startActivity(new Intent(this, MainActivity.class));
-        }
     }
 
     @Override
@@ -168,7 +162,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                         } else {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            finish();
+                            //finish();
+                            // do stuff here. https://www.youtube.com/watch?v=cRC02_ERfbo
                         }
 
                     }

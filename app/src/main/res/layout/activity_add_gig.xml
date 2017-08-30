@@ -13,81 +13,88 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        />
+        tools:targetApi="lollipop" />
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="40dp">
 
-        <TextView
-            android:id="@+id/text_gig_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="Gig Name" />
 
-        <EditText
-            android:id="@+id/gig_name"
-            android:layout_width="270dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp"
-            android:hint="@string/gig_name_hint"
-            android:inputType="textPersonName" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/gig_name"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:hint="@string/gig_name"
+                android:inputType="textPersonName" />
+        </android.support.design.widget.TextInputLayout>
+
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp">
+        android:paddingTop="40dp">
 
-        <TextView
-            android:id="@+id/text_gig_descrip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/description_txt" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/gig_description"
-            android:layout_width="270dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:hint="@string/gig_description"
-            android:inputType="textMultiLine" />
+            <EditText
+                android:id="@+id/gig_description"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:hint="@string/gig_description"
+                android:inputType="text|textMultiLine"/>
+        </android.support.design.widget.TextInputLayout>
+
     </TableRow>
 
     <TableRow
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:paddingTop="40dp">
+        android:paddingTop="70dp">
+
 
         <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:paddingTop="50dp"
-            android:layout_gravity="top"
-            android:text="@string/text_ammount" />
-
-        <EditText
-            android:id="@+id/gig_amnt"
-            android:layout_width="160dp"
+            android:id="@+id/usd_textview"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="35dp"
-            android:layout_marginStart="35dp"
-            android:hint="@string/ammt_hint"
-            android:inputType="numberDecimal"
-            android:textSize="70sp" />
+            android:layout_marginLeft="9dp"
+            android:layout_marginStart="90dp"
+            android:gravity="center"
+            android:text="@string/usd_txt"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="SmallSp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_amount"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/gig_amnt"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:hint="@string/ammt_hint"
+                android:inputType="number"
+                android:textSize="25sp" />
+        </android.support.design.widget.TextInputLayout>
+
+
     </TableRow>
 
     <TableRow
@@ -97,7 +104,7 @@
         android:paddingTop="40dp">
 
         <ImageButton
-            android:id="@+id/myfab_main_btn"
+            android:id="@+id/mybtn_add"
             android:layout_width="@dimen/fab_finish_size"
             android:layout_height="@dimen/fab_finish_size"
             android:layout_gravity="center"
@@ -106,7 +113,9 @@
             android:padding="25dp"
             android:src="@drawable/ic_done_white_128dp_1x"
             android:stateListAnimator="@animator/fab_elevation_selector"
-            tools:targetApi="lollipop"/>
+            tools:targetApi="lollipop"
+            android:contentDescription=""
+            tools:ignore="ContentDescription" />
 
     </TableRow>
 

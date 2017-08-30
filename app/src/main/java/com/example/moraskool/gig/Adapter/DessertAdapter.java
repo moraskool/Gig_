@@ -37,12 +37,14 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
             return VIEW_TYPE_OBJECT_VIEW;
         }
     }
-    public DessertAdapter(Context context) {
+    public DessertAdapter(Context context,List<Dessert> desserts) {
         this.context = context;
+        this.desserts = desserts;
 
-        desserts = Dessert.prepareDesserts(
+         desserts = Dessert.prepareDesserts(
                 context.getResources().getStringArray(R.array.dessert_names),
-                context.getResources().getStringArray(R.array.dessert_descriptions));
+                context.getResources().getStringArray(R.array.dessert_descriptions),
+                context.getResources().getStringArray(R.array.dessert_amounts));
     }
 
     // TODO: another placeholder stuff here
@@ -60,17 +62,21 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
         holder.mName.setText(dessert.getName());
         holder.mDescription.setText(dessert.getDescription());
         holder.mFirstLetter.setText(String.valueOf(dessert.getFirstLetter()));
+        holder.mPrice.setText(String.valueOf(dessert.getAmount()));
 
     }
 
     @Override
     public int getItemCount() {
+        // if nothing, return null,
+        // else return the number of items in the list
         return desserts == null ? 0 : desserts.size();
     }
 
     public static class DessertVh extends RecyclerView.ViewHolder {
 
         private TextView mName;
+        private TextView mPrice;
         private TextView mDescription;
         private TextView mFirstLetter;
 
@@ -78,6 +84,7 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
             super(itemView);
 
             mName = (TextView) itemView.findViewById(R.id.txt_name);
+            mPrice = (TextView) itemView.findViewById(R.id.txt_price);
             mDescription = (TextView) itemView.findViewById(R.id.txt_desc);
             mFirstLetter = (TextView) itemView.findViewById(R.id.txt_firstletter);
         }

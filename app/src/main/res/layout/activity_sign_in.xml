@@ -18,20 +18,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="140dp" />
 
-    <Button
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="300dp"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="64dp"
-        android:background="@drawable/sign_in_btn"
-        android:fontFamily="sans-serif-light"
         android:text="@string/sign_Google"
-        android:textColor="#ffffff"
-        android:visibility="visible">
-
-    </Button>
+        android:visibility="visible"/>
 
     <ProgressBar
         android:id="@+id/progressbar"

@@ -17,6 +17,11 @@
     <string name="gig_name">Gig Name</string>
     <string name="sign_in_to_gig">Sign in to Gig</string>
     <string name="usd_txt">USD</string>
+    <string name="finish">Finish</string>
+    <string name="skip">Skip</string>
+    <string name="gig">Gig</string>
+    <string name="study_earn">Study . Earn</string>
+    <string name="log_error_occurred">log error</string>
 
     <string-array name="android_layout_arrays">
         <item>Currency</item>

@@ -44,22 +44,22 @@ public class Dessert {
     }
 
     public String getAmount() {
-        return amount;
+        //smart ass move! *_* but not quite u_u
+        return  amount;
     }
 
     public void setAmount() {
-        this.amount = amount;
+        this.amount =  " $ " + amount;
     }
 
     public String getFirstLetter() {
-        return firstLetter;
+        return firstLetter.toUpperCase();
     }
 
     public void setFirstLetter(String firstLetter) {
         this.firstLetter = firstLetter;
     }
 
-    // TODO: 31/07/17 Append the Firebase data from database here
     public static List<Dessert> prepareDesserts(String[] names, String[] descriptions, String[] amounts) {
         List<Dessert> desserts = new ArrayList<>(names.length);
 

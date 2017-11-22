@@ -32,6 +32,13 @@ public class Utils {
         return drawable;
     }
 
+    /**
+     * Encode user email to use it as a Firebase key (Firebase does not allow "." in the key name)
+     * Encoded email is also used as "userEmail", list and item "owner" value
+     */
+    public static String encodeEmail(String userEmail) {
+        return userEmail.replace(".", ",");
+    }
 
     public static String readSharedSetting(Context ctx, String settingName, String defaultValue) {
         SharedPreferences sharedPref = ctx.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);

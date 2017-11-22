@@ -41,10 +41,10 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
         this.context = context;
         this.desserts = desserts;
 
-         desserts = Dessert.prepareDesserts(
-                context.getResources().getStringArray(R.array.dessert_names),
-                context.getResources().getStringArray(R.array.dessert_descriptions),
-                context.getResources().getStringArray(R.array.dessert_amounts));
+         // desserts = Dessert.prepareDesserts(
+         //       context.getResources().getStringArray(R.array.dessert_names),
+         //       context.getResources().getStringArray(R.array.dessert_descriptions),
+         //       context.getResources().getStringArray(R.array.dessert_amounts));
     }
 
 

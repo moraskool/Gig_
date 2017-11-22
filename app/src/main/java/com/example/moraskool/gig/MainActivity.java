@@ -1,6 +1,7 @@
 package com.example.moraskool.gig;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,18 +32,17 @@ import android.widget.Toast;
 
 import com.example.moraskool.gig.Adapter.DessertAdapter;
 import com.example.moraskool.gig.Model.Dessert;
+import com.example.moraskool.gig.Model.Users;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,69 +53,74 @@ import java.util.List;
  */
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    public String personName;
+
+    Context mContext = this;
+
     private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleApiClient mGoogleApiClient;
+
     private FirebaseDatabase mfirebaseDatabase;
     private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference mDatabaseGig;
+    private DatabaseReference UsersRef;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
-    private RecyclerView recyclerView;
-    private LinearLayoutManager linearLayoutManager;
-    private List<Dessert> dessertList;
-
-
+    private FirebaseAuth mAuth;
+    public String personName, personMail, uid;
     ImageButton fabBtn;
     View fabShadow;
-
-
     Toolbar toolbar;
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        mFirebaseAuth.addAuthStateListener(firebaseAuthListener);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // put log in here
         setContentView(R.layout.activity_tabs_header);
 
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
+        // create an object of sharedPreferenceManager and get stored user data
+        //sharedPrefManager = new SharedPrefManager(mContext);
+        //personName = sharedPrefManager.getName();
+        //personMail = sharedPrefManager.getUserEmail();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this , this )
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        configureSignIn();
 
         // Initialize FirebaseAuth
+
+
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+
+        // handle when there is a user to get the user profile
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth mFirebaseAuth) {
                 // Check if user is signed in (non-null) and update UI accordingly.
                 FirebaseUser currentUser = mFirebaseAuth.getCurrentUser();
                 if (currentUser != null) {
-                    for (UserInfo profile : currentUser.getProviderData()) {
-                       // ID of the provider (ex. google.com)
-                        String providerID = profile.getProviderId();
+                    // UID specific to the provider e.g google.com
+                    uid = currentUser.getUid();
+                    personName = currentUser.getDisplayName();
+                     if (getSupportActionBar() != null)
+                         getSupportActionBar().setTitle("Welcome, " + personName + "!");
 
-                        // UID specific to the provider e.g google.com
-                        String uid = profile.getUid();
+                    Log.d(TAG,"onAuthStateChanged:signed_in:"+currentUser.getUid());
 
-                        // Name, email address, and profile photo Url
-                         personName = profile.getDisplayName();
-                    }
                 } else {
-                    goSignIn();
+                   goSignIn();
                 }
             }
         };
 
+
+
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
         setSupportActionBar(toolbar);
 
-        if (getSupportActionBar() != null) getSupportActionBar().setTitle("Hello " + personName  + "! ");
+
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
@@ -195,19 +200,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        mFirebaseAuth.addAuthStateListener(firebaseAuthListener);
+    //This method creates a new user on our own Firebase database
+    //after a successful Authentication on Firebase
+    //It also saves the user info to SharedPreference
 
+    public void configureSignIn(){
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this , this )
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        mGoogleApiClient.connect();
     }
 
-    public void goSignIn(){
-        Intent intent = new Intent(this, SignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-
-    }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -248,8 +259,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public void showSettings(){}
 
+    public void goSignIn() {
+        Intent intent = new Intent(this, SignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
     public void logout(){
+
         FirebaseAuth.getInstance().signOut();
+
     }
 
     // handles the scrolling of each tab
@@ -305,26 +324,42 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setHasFixedSize(true);
 
+            final String curtUserId;
             DatabaseReference mDatabaseGig;
-            final List<Dessert> dessertList;
+            FirebaseAuth mFirebaseAuth;
+            FirebaseDatabase mFirebaseDatabase;
 
+            mFirebaseAuth= FirebaseAuth.getInstance();
+            mFirebaseDatabase = FirebaseDatabase.getInstance();
+            mDatabaseGig = mFirebaseDatabase.getReference();
+            FirebaseUser currUser = mFirebaseAuth.getCurrentUser();
+            curtUserId = currUser.getUid();
+            final String id = mDatabaseGig.push().getKey();
+            final List<Dessert> dessertList;
             // get the gig database
-            mDatabaseGig = FirebaseDatabase.getInstance().getReference("Gig Posts");
+            //mDatabaseGig = FirebaseDatabase.getInstance().getReferenceFromUrl();
+
             dessertList = new ArrayList<>();
            final DessertAdapter adapter = new DessertAdapter(getContext(), dessertList);
             recyclerView.setAdapter(adapter);
 
-            mDatabaseGig.addValueEventListener(new ValueEventListener() {
+            mDatabaseGig.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     dessertList.clear();
                     for(DataSnapshot gigSnapshot: dataSnapshot.getChildren()){
-                        Dessert dessert = gigSnapshot.getValue(Dessert.class);
+                        Users user = new Users();
+                        //user.setDessert(gigSnapshot.child("users").child.(curtUserId).getValue(Users.class).getDessert());
+                        Dessert dessert = dataSnapshot
+                                //.child("users")
+                                //.child(curtUserId)
+                                .child("Gig posts")
+                               // .child(id)
+                                .getValue(Dessert.class);
                         dessertList.add(dessert);
                         adapter.notifyDataSetChanged();
                     }
-
                 }
 
                 @Override
@@ -354,6 +389,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             mFirebaseAuth.removeAuthStateListener(firebaseAuthListener);
         }
     }
+
 
    /* Todo : Implement to check if there is data
     private void checkIfEmpty(){

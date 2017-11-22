@@ -4,22 +4,18 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.moraskool.gig.Model.Dessert;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 /**
  * Created by moraskool on 29/06/2017.
@@ -27,9 +23,18 @@ import java.util.Locale;
 
 public class AddGigActivity  extends AppCompatActivity {
 
-   private ImageButton saveBtn;
+    private static String TAG = "AddGigActivity";
+    private ImageButton saveBtn;
     private EditText gigName, gigDescrip, gigAmount;
-     DatabaseReference mDatabaseGig;
+    private String userID;
+
+
+    //Firebase Database stuff
+    private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private DatabaseReference myRef;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,38 +52,45 @@ public class AddGigActivity  extends AppCompatActivity {
 
         gigName = (EditText)findViewById(R.id.gig_name);
         gigDescrip = (EditText)findViewById(R.id.gig_description);
-
         gigAmount = (EditText) findViewById(R.id.gig_amnt);
-        gigAmount.addTextChangedListener(onTextChangedListener());
-
         saveBtn = (ImageButton) findViewById(R.id.mybtn_add);
-        mDatabaseGig = FirebaseDatabase.getInstance().getReference("Gig Posts");
 
+        //gigAmount.addTextChangedListener(onTextChangedListener());
+
+
+        mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef =  FirebaseDatabase.getInstance().getReference();
+
+        //mMovieRef = mRef.child("Name");
+        FirebaseUser user = mAuth.getCurrentUser();
+        userID = user.getUid();
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 AddGig();
             }
         });
 
     }
 
+
     // real-time adding to the firebase database
     private void AddGig(){
-        String name = gigName.getText().toString().trim();
-        String descrip = gigDescrip.getText().toString().trim();
-        String amount = gigAmount.getText().toString().trim();
+        String name = gigName.getText().toString();
+        String descrip = gigDescrip.getText().toString();
+        String amount = gigAmount.getText().toString();
 
         if((!TextUtils.isEmpty(name))&&(!TextUtils.isEmpty(descrip) && (!TextUtils.isEmpty(amount))) ){
 
-            String id =  mDatabaseGig.push().getKey();
+            FirebaseUser user = mAuth.getCurrentUser();
+            userID = user.getUid();
+            String id =  myRef.push().getKey();
             Dessert dessert = new Dessert( name, descrip, amount);
-            mDatabaseGig.child(id).setValue(dessert);
+            myRef.child("users").child(userID).child("Gig posts").child(id).setValue(dessert);
             Toast.makeText(this, "Posted! (^_^)",Toast.LENGTH_LONG).show();
             finish();
 
-            //Todo make a toast for gig added here
         // you can still sprlit these to check for each text field
         }else{
             Toast.makeText(this, "One or more field(s) missing!",Toast.LENGTH_LONG).show();
@@ -86,6 +98,8 @@ public class AddGigActivity  extends AppCompatActivity {
     }
 
     // method to Auto-format the amount editText to 2 decimal places
+
+    /*
     private TextWatcher onTextChangedListener() {
         return new TextWatcher() {
             @Override
@@ -107,13 +121,13 @@ public class AddGigActivity  extends AppCompatActivity {
 
                     Long longval;
                     if (originalString.contains(".")) {
-                        originalString = originalString.replaceAll(".", " ");
+                        originalString = originalString.replaceAll(".", ".");
                     }
                     longval = Long.parseLong(originalString);
 
 
                     DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);//(new Locale("en", "IN"))
-                    formatter.applyPattern("########.0#");
+                    formatter.applyPattern("########.##");
                     String formattedString = formatter.format(longval);
 
                     //setting text after format to EditText
@@ -127,5 +141,6 @@ public class AddGigActivity  extends AppCompatActivity {
             }
         };
     }
+    */
 }
 

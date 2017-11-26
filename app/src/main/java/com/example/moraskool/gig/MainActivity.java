@@ -28,11 +28,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.moraskool.gig.Adapter.DessertAdapter;
 import com.example.moraskool.gig.Model.Dessert;
 import com.example.moraskool.gig.Model.Users;
+import com.example.moraskool.gig.Utils.Constants;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private DatabaseReference UsersRef;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private FirebaseAuth mAuth;
+    private RecyclerView recyclerView;
+    private TextView emptyView;
     public String personName, personMail, uid;
     ImageButton fabBtn;
     View fabShadow;
@@ -80,6 +84,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs_header);
+
+        /*recyclerView = (RecyclerView) rootView.findViewById(R.id.dummyfrag_scrollableview);
+        emptyView = (TextView) rootView.findViewById(R.id.empty_view);
+
+        if (dataset.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }*/
 
         // create an object of sharedPreferenceManager and get stored user data
         //sharedPrefManager = new SharedPrefManager(mContext);
@@ -194,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 // TODO: 31/07/17 Add circular reveal
                 Intent intent = new Intent(MainActivity.this, AddGigActivity.class);
                 startActivity(intent);
-
             }
         });
 
@@ -219,14 +234,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mGoogleApiClient.connect();
     }
 
-
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        // TODO : Create another "FeedsFragment" class for the each tabs,
 
         adapter.addFrag(new FeedsFragment(
                 ContextCompat.getColor(this, R.color.amber_50)), "Gig Feeds");
-        adapter.addFrag(new FeedsFragment(
+        adapter.addFrag(new UserFeedFragment(
                 ContextCompat.getColor(this, R.color.purple_50)), "Your Gigs");
         viewPager.setAdapter(adapter);
     }
@@ -252,12 +265,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             case R.id.action_logout:
                 logout();
                 return true;
+            case R.id.action_history:
+                showHistory();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void showSettings(){}
+    public void showSettings(){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void showHistory(){}
 
     public void goSignIn() {
         Intent intent = new Intent(this, SignInActivity.class);
@@ -268,7 +289,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void logout(){
 
         FirebaseAuth.getInstance().signOut();
-
     }
 
     // handles the scrolling of each tab
@@ -325,16 +345,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             recyclerView.setHasFixedSize(true);
 
             final String curtUserId;
-            DatabaseReference mDatabaseGig;
+            DatabaseReference mDatabaseGig, databaseGig;
             FirebaseAuth mFirebaseAuth;
             FirebaseDatabase mFirebaseDatabase;
 
             mFirebaseAuth= FirebaseAuth.getInstance();
             mFirebaseDatabase = FirebaseDatabase.getInstance();
-            mDatabaseGig = mFirebaseDatabase.getReference();
             FirebaseUser currUser = mFirebaseAuth.getCurrentUser();
             curtUserId = currUser.getUid();
+            mDatabaseGig = mFirebaseDatabase.getReference("/users/" + curtUserId + "/Gig posts/");
+            //.child(curtUserId)
+            // .child("Gig posts")
+            // .child(id));
+           // databaseGig = mDatabaseGig;
             final String id = mDatabaseGig.push().getKey();
+            mDatabaseGig = mFirebaseDatabase.getReference("/users/" + curtUserId + "/Gig posts/" + id + "/");
             final List<Dessert> dessertList;
             // get the gig database
             //mDatabaseGig = FirebaseDatabase.getInstance().getReferenceFromUrl();
@@ -350,12 +375,92 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     dessertList.clear();
                     for(DataSnapshot gigSnapshot: dataSnapshot.getChildren()){
                         Users user = new Users();
-                        //user.setDessert(gigSnapshot.child("users").child.(curtUserId).getValue(Users.class).getDessert());
+                       // user.setDessert(gigSnapshot.child("users").child(curtUserId).getValue(Users.class).getDessert());
+                       // Dessert dess = user.getDessert();
                         Dessert dessert = dataSnapshot
                                 //.child("users")
                                 //.child(curtUserId)
-                                .child("Gig posts")
+                               // .child("Gig posts")
                                // .child(id)
+                                .getValue(Dessert.class);
+                        dessertList.add(dessert);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            // possible to put progress dialogue
+            return view;
+        }
+    }
+
+    public static class UserFeedFragment extends Fragment {
+        int color;
+
+        public UserFeedFragment() {
+        }
+
+        @SuppressLint("ValidFragment")
+        public UserFeedFragment(int color) {
+            this.color = color;
+        }
+
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.dummy_fragment, container, false);
+            final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.dummyfrag_scrollableview);
+            final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
+            frameLayout.setBackgroundColor(color);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setHasFixedSize(true);
+
+            final String curtUserId;
+            DatabaseReference mDatabaseGig;
+            FirebaseAuth mFirebaseAuth;
+            FirebaseDatabase mFirebaseDatabase;
+
+            mFirebaseAuth= FirebaseAuth.getInstance();
+            mFirebaseDatabase = FirebaseDatabase.getInstance();
+            FirebaseUser currUser = mFirebaseAuth.getCurrentUser();
+            curtUserId = currUser.getUid();
+            mDatabaseGig = mFirebaseDatabase
+                    .getReference(Constants.FIREBASE_LOCATION_USERS)
+                   // .child(curtUserId)
+                    .child("Gig posts");
+            //.child(curtUserId)
+            // .child("Gig posts")
+            // .child(id));
+            final String id = mDatabaseGig.push().getKey();
+
+            final List<Dessert> dessertList;
+            // get the gig database
+            //mDatabaseGig = FirebaseDatabase.getInstance().getReferenceFromUrl();
+
+            dessertList = new ArrayList<>();
+            final DessertAdapter adapter = new DessertAdapter(getContext(), dessertList);
+            recyclerView.setAdapter(adapter);
+
+            mDatabaseGig.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    dessertList.clear();
+                    for(DataSnapshot gigSnapshot: dataSnapshot.getChildren()){
+                        Users user = new Users();
+                        // user.setDessert(gigSnapshot.child("users").child(curtUserId).getValue(Users.class).getDessert());
+                        // Dessert dess = user.getDessert();
+                        Dessert dessert = dataSnapshot
+                               // .child("users")
+                               // .child(curtUserId)
+                               // .child("Gig posts")
+                                 .child(id)
                                 .getValue(Dessert.class);
                         dessertList.add(dessert);
                         adapter.notifyDataSetChanged();

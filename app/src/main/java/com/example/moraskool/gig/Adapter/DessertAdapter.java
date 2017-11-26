@@ -27,7 +27,7 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
 
     private Context context;
 
-     // TODO: placeholder stuff here
+    // TODO: placeholder stuff here
 
     @Override
     public int getItemViewType(int position) {
@@ -37,14 +37,15 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
             return VIEW_TYPE_OBJECT_VIEW;
         }
     }
+
     public DessertAdapter(Context context,List<Dessert> desserts) {
         this.context = context;
         this.desserts = desserts;
 
-         // desserts = Dessert.prepareDesserts(
-         //       context.getResources().getStringArray(R.array.dessert_names),
-         //       context.getResources().getStringArray(R.array.dessert_descriptions),
-         //       context.getResources().getStringArray(R.array.dessert_amounts));
+        // desserts = Dessert.prepareDesserts(
+        //       context.getResources().getStringArray(R.array.dessert_names),
+        //       context.getResources().getStringArray(R.array.dessert_descriptions),
+        //       context.getResources().getStringArray(R.array.dessert_amounts));
     }
 
 
@@ -59,11 +60,13 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
     @Override
     public void onBindViewHolder(DessertVh holder, int position) {
         Dessert dessert = desserts.get(position);
+        System.out.println(position);
 
         holder.mName.setText(dessert.getName());
         holder.mDescription.setText(dessert.getDescription());
-        holder.mFirstLetter.setText(String.valueOf(dessert.getFirstLetter()));
+        holder.mFirstLetter.setText(String.valueOf(dessert.getName()));
         holder.mPrice.setText(String.valueOf(dessert.getAmount()));
+
 
     }
 

@@ -9,6 +9,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowActionBarOverlay">true</item>
         <item name="windowNoTitle">true</item>
+        <item name="preferenceTheme">@style/Preference.PreferenceScreen</item>
         <item name="android:windowBackground">@color/bg_light</item>
     </style>
 

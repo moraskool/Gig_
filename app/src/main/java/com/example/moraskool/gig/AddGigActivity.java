@@ -87,6 +87,7 @@ public class AddGigActivity  extends AppCompatActivity {
             userID = user.getUid();
             String id =  myRef.push().getKey();
             Dessert dessert = new Dessert( name, descrip, amount);
+           // myRef.child(id).setValue(dessert);
             myRef.child("users").child(userID).child("Gig posts").child(id).setValue(dessert);
             Toast.makeText(this, "Posted! (^_^)",Toast.LENGTH_LONG).show();
             finish();

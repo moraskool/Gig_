@@ -1,10 +1,5 @@
 package com.example.moraskool.gig.Model;
 
-import com.google.firebase.database.DatabaseReference;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Suleiman on 02/03/17.
  */
@@ -15,18 +10,16 @@ public class Dessert {
     private String description;
     private String firstLetter;
     private String amount;
-    private DatabaseReference mDatabaseReference;
 
-    public Dessert(){
-
-    }
     public Dessert(String name, String description, String amount) {
         this.name = name;
         this.firstLetter = String.valueOf(name.charAt(0));
         this.description = description;
         this.amount = amount;
     }
+   public Dessert() {
 
+   }
     public String getName() {
         return name;
     }
@@ -45,11 +38,11 @@ public class Dessert {
 
     public String getAmount() {
         //smart ass move! *_* but not quite u_u
-        return  amount;
+        return  amount ;
     }
 
-    public void setAmount() {
-        this.amount =  " $ " + amount;
+    public void setAmount(String amount) {
+         this.amount =  " $ " + amount;
     }
 
     public String getFirstLetter() {
@@ -58,19 +51,6 @@ public class Dessert {
 
     public void setFirstLetter(String firstLetter) {
         this.firstLetter = firstLetter;
-    }
-
-    public static List<Dessert> prepareDesserts(String[] names, String[] descriptions, String[] amounts) {
-        List<Dessert> desserts = new ArrayList<>(names.length);
-
-
-        for (int i = 0; i < names.length; i++) {
-            Dessert dessert = new Dessert(names[i], descriptions[i], amounts[i]);
-            desserts.add(dessert);
-        }
-
-
-        return desserts;
     }
 
 }

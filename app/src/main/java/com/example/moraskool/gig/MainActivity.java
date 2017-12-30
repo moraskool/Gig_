@@ -33,8 +33,6 @@ import android.widget.Toast;
 
 import com.example.moraskool.gig.Adapter.DessertAdapter;
 import com.example.moraskool.gig.Model.Dessert;
-import com.example.moraskool.gig.Model.Users;
-import com.example.moraskool.gig.Utils.Constants;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -344,50 +342,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setHasFixedSize(true);
 
-            final String curtUserId;
-            DatabaseReference mDatabaseGig, databaseGig;
-            FirebaseAuth mFirebaseAuth;
-            FirebaseDatabase mFirebaseDatabase;
+            String curtUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            mFirebaseAuth= FirebaseAuth.getInstance();
-            mFirebaseDatabase = FirebaseDatabase.getInstance();
-            FirebaseUser currUser = mFirebaseAuth.getCurrentUser();
-            curtUserId = currUser.getUid();
-            mDatabaseGig = mFirebaseDatabase.getReference("/users/" + curtUserId + "/Gig posts/");
-            //.child(curtUserId)
-            // .child("Gig posts")
-            // .child(id));
-           // databaseGig = mDatabaseGig;
-            final String id = mDatabaseGig.push().getKey();
-            mDatabaseGig = mFirebaseDatabase.getReference("/users/" + curtUserId + "/Gig posts/" + id + "/");
-            final List<Dessert> dessertList;
-            // get the gig database
-            //mDatabaseGig = FirebaseDatabase.getInstance().getReferenceFromUrl();
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                   // .child(curtUserId)
+                    .child("Gig posts");
 
-            dessertList = new ArrayList<>();
-           final DessertAdapter adapter = new DessertAdapter(getContext(), dessertList);
+            final List<Dessert> dessertList = new ArrayList<Dessert>();
+
+            final DessertAdapter adapter = new DessertAdapter(getContext(), dessertList);
             recyclerView.setAdapter(adapter);
 
-            mDatabaseGig.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            rootRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     dessertList.clear();
                     for(DataSnapshot gigSnapshot: dataSnapshot.getChildren()){
-                        Users user = new Users();
-                       // user.setDessert(gigSnapshot.child("users").child(curtUserId).getValue(Users.class).getDessert());
-                       // Dessert dess = user.getDessert();
-                        Dessert dessert = dataSnapshot
-                                //.child("users")
-                                //.child(curtUserId)
-                               // .child("Gig posts")
-                               // .child(id)
+
+                        Dessert dessert = gigSnapshot
                                 .getValue(Dessert.class);
                         dessertList.add(dessert);
                         adapter.notifyDataSetChanged();
                     }
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -421,52 +400,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setHasFixedSize(true);
 
-            final String curtUserId;
-            DatabaseReference mDatabaseGig;
-            FirebaseAuth mFirebaseAuth;
-            FirebaseDatabase mFirebaseDatabase;
+            String curtUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            mFirebaseAuth= FirebaseAuth.getInstance();
-            mFirebaseDatabase = FirebaseDatabase.getInstance();
-            FirebaseUser currUser = mFirebaseAuth.getCurrentUser();
-            curtUserId = currUser.getUid();
-            mDatabaseGig = mFirebaseDatabase
-                    .getReference(Constants.FIREBASE_LOCATION_USERS)
-                   // .child(curtUserId)
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(curtUserId)
                     .child("Gig posts");
-            //.child(curtUserId)
-            // .child("Gig posts")
-            // .child(id));
-            final String id = mDatabaseGig.push().getKey();
 
-            final List<Dessert> dessertList;
-            // get the gig database
-            //mDatabaseGig = FirebaseDatabase.getInstance().getReferenceFromUrl();
+            final List<Dessert> dessertList = new ArrayList<Dessert>();
 
-            dessertList = new ArrayList<>();
             final DessertAdapter adapter = new DessertAdapter(getContext(), dessertList);
             recyclerView.setAdapter(adapter);
 
-            mDatabaseGig.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            rootRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     dessertList.clear();
                     for(DataSnapshot gigSnapshot: dataSnapshot.getChildren()){
-                        Users user = new Users();
-                        // user.setDessert(gigSnapshot.child("users").child(curtUserId).getValue(Users.class).getDessert());
-                        // Dessert dess = user.getDessert();
-                        Dessert dessert = dataSnapshot
-                               // .child("users")
-                               // .child(curtUserId)
-                               // .child("Gig posts")
-                                 .child(id)
+
+                        Dessert dessert = gigSnapshot
                                 .getValue(Dessert.class);
                         dessertList.add(dessert);
                         adapter.notifyDataSetChanged();
                     }
                 }
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 

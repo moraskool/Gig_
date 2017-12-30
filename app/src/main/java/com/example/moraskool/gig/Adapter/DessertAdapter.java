@@ -60,11 +60,11 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
     @Override
     public void onBindViewHolder(DessertVh holder, int position) {
         Dessert dessert = desserts.get(position);
-        System.out.println(position);
+
 
         holder.mName.setText(dessert.getName());
         holder.mDescription.setText(dessert.getDescription());
-        holder.mFirstLetter.setText(String.valueOf(dessert.getName()));
+        holder.mFirstLetter.setText(String.valueOf(dessert.getFirstLetter()));
         holder.mPrice.setText(String.valueOf(dessert.getAmount()));
 
 

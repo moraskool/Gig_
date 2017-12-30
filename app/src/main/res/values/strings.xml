@@ -10,7 +10,7 @@
     <string name="gig_description">Type your full description here</string>
     <string name="description_txt">Description</string>
     <string name="text_ammount">Amount</string>
-    <string name="ammt_hint"> Amount e.g 50</string>
+    <string name="ammt_hint"> Amount e.g $50</string>
     <string name="click_on_left">Gigs will appear here once you start using the app.</string>
     <string name="sign_Google"> Sign In with Google</string>
     <string name="snap">This is your gig feed.</string>

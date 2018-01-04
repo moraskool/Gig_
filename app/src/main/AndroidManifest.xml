@@ -27,6 +27,9 @@
             android:name=".PagerActivity"
             android:theme="@style/MyTheme.Detail"/>
         <activity
+            android:name=".ViewGigActivity"
+            android:theme="@style/MyTheme.Detail"/>
+        <activity
             android:name=".SettingsActivity"
             android:label="Settings"
             android:parentActivityName=".MainActivity">

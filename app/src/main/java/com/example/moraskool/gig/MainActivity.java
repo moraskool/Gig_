@@ -43,6 +43,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,31 +84,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs_header);
 
-        /*recyclerView = (RecyclerView) rootView.findViewById(R.id.dummyfrag_scrollableview);
-        emptyView = (TextView) rootView.findViewById(R.id.empty_view);
-
-        if (dataset.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        }
-        else {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-        }*/
-
-        // create an object of sharedPreferenceManager and get stored user data
-        //sharedPrefManager = new SharedPrefManager(mContext);
-        //personName = sharedPrefManager.getName();
-        //personMail = sharedPrefManager.getUserEmail();
 
         configureSignIn();
 
         // Initialize FirebaseAuth
-
-
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        
         // handle when there is a user to get the user profile
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -339,22 +323,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
             frameLayout.setBackgroundColor(color);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+            linearLayoutManager.setReverseLayout(true);
+            linearLayoutManager.setStackFromEnd(true);
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setHasFixedSize(true);
 
-            String curtUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference()
-                    .child("users")
-                   // .child(curtUserId)
-                    .child("Gig posts");
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+            Query latestQuery = rootRef.child("All Posts").orderByKey().limitToFirst(100);
 
             final List<Dessert> dessertList = new ArrayList<Dessert>();
 
             final DessertAdapter adapter = new DessertAdapter(getContext(), dessertList);
             recyclerView.setAdapter(adapter);
 
-            rootRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            latestQuery.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -397,22 +379,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             final FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.dummyfrag_bg);
             frameLayout.setBackgroundColor(color);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity().getBaseContext());
+            linearLayoutManager.setReverseLayout(true);
+            linearLayoutManager.setStackFromEnd(true);
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setHasFixedSize(true);
 
             String curtUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference()
-                    .child("users")
-                    .child(curtUserId)
-                    .child("Gig posts");
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+
+
+            Query latestQuery = rootRef
+                               .child("User Posts")
+                               .child(curtUserId)
+                               .child("Gig posts")
+                               .orderByKey().limitToFirst(100);
 
             final List<Dessert> dessertList = new ArrayList<Dessert>();
 
             final DessertAdapter adapter = new DessertAdapter(getContext(), dessertList);
             recyclerView.setAdapter(adapter);
 
-            rootRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            latestQuery.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 

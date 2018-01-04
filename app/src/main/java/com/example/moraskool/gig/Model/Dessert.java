@@ -10,12 +10,14 @@ public class Dessert {
     private String description;
     private String firstLetter;
     private String amount;
+    private String timestamp;
 
-    public Dessert(String name, String description, String amount) {
+    public Dessert(String name, String description, String amount ) {
         this.name = name;
         this.firstLetter = String.valueOf(name.charAt(0));
         this.description = description;
         this.amount = amount;
+        this.timestamp = timestamp;
     }
    public Dessert() {
 
@@ -37,12 +39,20 @@ public class Dessert {
     }
 
     public String getAmount() {
-        //smart ass move! *_* but not quite u_u
         return  amount ;
     }
 
     public void setAmount(String amount) {
-         this.amount =  " $ " + amount;
+        //smart ass move! *_*
+        this.amount =  " $ " + amount;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getFirstLetter() {

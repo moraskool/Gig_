@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.moraskool.gig.Model.Dessert;
@@ -26,6 +27,7 @@ public class AddGigActivity  extends AppCompatActivity {
     private static String TAG = "AddGigActivity";
     private ImageButton saveBtn;
     private EditText gigName, gigDescrip, gigAmount;
+    private TextView gigDate;
     private String userID;
 
 
@@ -34,6 +36,7 @@ public class AddGigActivity  extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DatabaseReference myRef;
+    private DatabaseReference UserPostsRef,allPostsRef;
 
 
     @Override
@@ -54,13 +57,15 @@ public class AddGigActivity  extends AppCompatActivity {
         gigDescrip = (EditText)findViewById(R.id.gig_description);
         gigAmount = (EditText) findViewById(R.id.gig_amnt);
         saveBtn = (ImageButton) findViewById(R.id.mybtn_add);
+        gigDate = (TextView) findViewById(R.id.timestamp);
 
         //gigAmount.addTextChangedListener(onTextChangedListener());
 
 
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef =  FirebaseDatabase.getInstance().getReference();
+        UserPostsRef =  FirebaseDatabase.getInstance().getReference();
+        allPostsRef = FirebaseDatabase.getInstance().getReference();
 
         //mMovieRef = mRef.child("Name");
         FirebaseUser user = mAuth.getCurrentUser();
@@ -80,15 +85,17 @@ public class AddGigActivity  extends AppCompatActivity {
         String name = gigName.getText().toString();
         String descrip = gigDescrip.getText().toString();
         String amount = gigAmount.getText().toString();
+       // String date =   gigDate.getat
 
         if((!TextUtils.isEmpty(name))&&(!TextUtils.isEmpty(descrip) && (!TextUtils.isEmpty(amount))) ){
 
             FirebaseUser user = mAuth.getCurrentUser();
             userID = user.getUid();
-            String id =  myRef.push().getKey();
-            Dessert dessert = new Dessert( name, descrip, amount);
+            String id =  UserPostsRef.push().getKey();
+            Dessert dessert = new Dessert(name, descrip, amount);
            // myRef.child(id).setValue(dessert);
-            myRef.child("users").child(userID).child("Gig posts").child(id).setValue(dessert);
+            UserPostsRef.child("User Posts").child(userID).child("Gig posts").child(id).setValue(dessert);
+            allPostsRef.child("All Posts").child(id).setValue(dessert);
             Toast.makeText(this, "Posted! (^_^)",Toast.LENGTH_LONG).show();
             finish();
 

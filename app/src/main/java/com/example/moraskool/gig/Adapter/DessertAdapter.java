@@ -6,8 +6,12 @@ package com.example.moraskool.gig.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -15,6 +19,10 @@ import android.widget.TextView;
 import com.example.moraskool.gig.Model.Dessert;
 import com.example.moraskool.gig.R;
 import com.example.moraskool.gig.ViewGigActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +33,6 @@ import java.util.List;
 
 
 public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertVh> {
-
 
     private List<Dessert> desserts = new ArrayList<>();
     private static final int VIEW_TYPE_EMPTY_LIST_PLACEHOLDER = 0;
@@ -63,7 +70,7 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
     }
 
     @Override
-    public void onBindViewHolder(DessertVh holder, int position) {
+    public void onBindViewHolder(DessertVh holder, final int position) {
         Dessert dessert = desserts.get(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,8 +78,22 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
                 Intent intent = new Intent(view.getContext() , ViewGigActivity.class);
                 view.getContext().startActivity(intent);
             }
-        });
 
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                String curtUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                final Query latestQuery = rootRef
+                        .child("User Posts")
+                        .child(curtUserId)
+                        .child("Gig posts");
+                latestQuery.getRef().removeValue();
+
+                return true;
+            }
+        });
         holder.mName.setText(dessert.getName());
         holder.mDescription.setText(dessert.getDescription());
         holder.mFirstLetter.setText(String.valueOf(dessert.getFirstLetter()));
@@ -81,6 +102,10 @@ public class DessertAdapter extends RecyclerView.Adapter<DessertAdapter.DessertV
 
     }
 
+    public interface RecyclerViewItemClickListener {
+        void onClickListenerForItem(int position);
+
+    }
     public static String getTimeStamp(String dateStr) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timestamp = "";

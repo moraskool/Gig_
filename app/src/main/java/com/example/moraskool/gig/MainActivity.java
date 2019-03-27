@@ -21,14 +21,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.moraskool.gig.Adapter.DessertAdapter;
@@ -62,15 +63,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private FirebaseDatabase mfirebaseDatabase;
     private FirebaseAuth mFirebaseAuth;
-    private DatabaseReference UsersRef;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
-    private FirebaseAuth mAuth;
-    private RecyclerView recyclerView;
-    private TextView emptyView;
-    public String personName, personMail, uid;
+    public String personName, uid;
     ImageButton fabBtn;
     View fabShadow;
-    Toolbar toolbar;
 
     @Override
     public void onStart(){
@@ -87,10 +83,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         configureSignIn();
 
+        //mfirebaseDatabase.getInstance().setPersistenceEnabled(true);
         // Initialize FirebaseAuth
         mFirebaseAuth = FirebaseAuth.getInstance();
+       // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         
         // handle when there is a user to get the user profile
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -112,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
             }
         };
-
-
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
         setSupportActionBar(toolbar);
@@ -200,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     //This method creates a new user on our own Firebase database
     //after a successful Authentication on Firebase
     //It also saves the user info to SharedPreference
-
     public void configureSignIn(){
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -272,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         FirebaseAuth.getInstance().signOut();
     }
+
 
     // handles the scrolling of each tab
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -384,12 +379,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setHasFixedSize(true);
 
+
             String curtUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+            final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
 
 
-            Query latestQuery = rootRef
+            final Query latestQuery = rootRef
                                .child("User Posts")
                                .child(curtUserId)
                                .child("Gig posts")
@@ -418,8 +414,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 }
             });
-
-            // possible to put progress dialogue
             return view;
         }
     }
@@ -432,6 +426,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
+
     @Override
     public void onStop(){
         super.onStop();
@@ -440,7 +435,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             mFirebaseAuth.removeAuthStateListener(firebaseAuthListener);
         }
     }
-
 
    /* Todo : Implement to check if there is data
     private void checkIfEmpty(){

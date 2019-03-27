@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.moraskool.gig.Utils.SharedPrefManager;
 import com.example.moraskool.gig.Utils.Utils;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -54,7 +53,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private ProgressBar progressBar;
     public String personName, personMail, uid;
     private String idToken;
-    public SharedPrefManager sharedPrefManager;
     private final Context mContext = this;
 
     @Override
@@ -102,37 +100,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         progressBar = (ProgressBar) findViewById(R.id.progressbar);
     }
 
-   /* private void createUserInFirebaseHelper(){
-
-        //final String encodedEmail = Utils.encodeEmail(personMail);
-        //create an object of Firebase database and pass the the Firebase URL
-        final Firebase userLocation = new Firebase(Constants.FIREBASE_URL_USERS).child(personMail);
-
-        //Add a Listerner to that above location
-        userLocation.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(com.firebase.client.DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null) {
-                    // Insert into Firebase database
-                    Users user = new Users(personName, personMail, uid);
-                    userLocation.setValue(user);
-                    Toast.makeText(SignInActivity.this, "Account created!", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-                Log.d(TAG, getString(R.string.log_error_occurred) + firebaseError.getMessage());
-                //hideProgressDialog();
-                if (firebaseError.getCode() == FirebaseError.EMAIL_TAKEN){
-                }
-                else {
-                    Toast.makeText(SignInActivity.this, firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-*/
     public void configureSignIn(){
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -179,18 +146,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-//                idToken = account.getIdToken();
-//
-//                // Save Data to SharedPreference
-//                sharedPrefManager = new SharedPrefManager(mContext);
-//                sharedPrefManager.saveIsLoggedIn(mContext, true);
-//
-//                sharedPrefManager.saveEmail(mContext, personMail);
-//                sharedPrefManager.saveName(mContext, personName);
-//                sharedPrefManager.saveToken(mContext, idToken);
-                //sharedPrefManager.saveIsLoggedIn(mContext, true);
-
-//              AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
                 firebaseAuthWithGoogle(account);
             } else {
                 // Log message Google Sign In failed
@@ -200,6 +155,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             }
         }
     }
+
 
     // Start authentication with Google
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
